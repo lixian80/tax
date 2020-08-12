@@ -1,0 +1,205 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>👱Tax Calculator</title>
+  
+  <!--<link rel="stylesheet" href="index.css">-->
+  <style>
+  table, th, td {
+  border: 1px solid black;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+  </style>
+
+</head>
+
+<body>
+
+<h1>Income Tax Calculator</h1>
+
+<div class = "center">
+<table>
+<tr>
+<th></th>
+<th>Jan</th>
+<th>Feb</th>
+<th>Mar</th>
+<th>Apr</th>
+<th>May</th>
+<th>Jun</th>
+<th>Jul</th>
+<th>Aug</th>
+<th>Sep</th>
+<th>Oct</th>
+<th>Nov</th>
+<th>Dec</th>
+</tr>
+
+<tr>
+<th>Taxable Gross</th>
+<td><input style="width: 70px;" id="jan" type="number"></td>
+<td><input style="width: 70px;" id="feb" type="number"></td>
+<td><input style="width: 70px;" id="mar" type="number"></td>
+<td><input style="width: 70px;" id="apr" type="number"></td>
+<td><input style="width: 70px;" id="may" type="number"></td>
+<td><input style="width: 70px;" id="jun" type="number"></td>
+<td><input style="width: 70px;" id="jul" type="number"></td>
+<td><input style="width: 70px;" id="aug" type="number"></td>
+<td><input style="width: 70px;" id="sep" type="number"></td>
+<td><input style="width: 70px;" id="oct" type="number"></td>
+<td><input style="width: 70px;" id="nov" type="number"></td>
+<td><input style="width: 70px;" id="dec" type="number"></td>
+</tr>
+
+<tr>
+<th>Total Taxable</th>
+<td id="total0"></td>
+<td id="total1"></td>
+<td id="total2"></td>
+<td id="total3"></td>
+<td id="total4"></td>
+<td id="total5"></td>
+<td id="total6"></td>
+<td id="total7"></td>
+<td id="total8"></td>
+<td id="total9"></td>
+<td id="total10"></td>
+<td id="total11"></td>
+</tr>
+
+<tr>
+<th>Income Tax</th>
+<td id="incomeTax0"></td>
+<td id="incomeTax1"></td>
+<td id="incomeTax2"></td>
+<td id="incomeTax3"></td>
+<td id="incomeTax4"></td>
+<td id="incomeTax5"></td>
+<td id="incomeTax6"></td>
+<td id="incomeTax7"></td>
+<td id="incomeTax8"></td>
+<td id="incomeTax9"></td>
+<td id="incomeTax10"></td>
+<td id="incomeTax11"></td>
+
+</tr>
+
+</table>
+<br>
+<br>
+
+<button onclick="calculate()" >开始计算</button>
+<button onClick="window.location.reload()">清除页面</button>
+<br>
+
+<h3 style ="margin-bottom: 0";>Tips:</h3>
+
+<ul>
+<li>将MayPay工资单上的Taxable Gross输入到对应月份中，然后点击<strong>'开始计算'</strong>即可计算用户每个月应该要缴纳的个税。</li>
+<li>Total Taxable代表累积到当月的累积预扣预缴纳税所得额。</li>
+<li>当月个人应交税=（到当前月的全部的Taxable Gross的总和 -（5000 * 当前月份）） * 预扣率 - 速算扣除数 - 前几个月的个人应交税额（income Tax)</li>
+<li>如果用户某月的Taxable Gross数值为负数，则此表不适用，敬请期待更新版本。</li>
+</ul>
+
+<p id="test"></p>
+<img src="calculate.JPG" alt="个税计算表">
+</div>
+<script>
+
+function calculate() {
+	var jant = Number(document.getElementById("jan").value);
+	var febt = Number(document.getElementById("feb").value);
+	var mart = Number(document.getElementById("mar").value);
+	var aprt = Number(document.getElementById("apr").value);
+	var mayt = Number(document.getElementById("may").value);
+	var junt = Number(document.getElementById("jun").value);
+	var jult = Number(document.getElementById("jul").value);
+	var augt = Number(document.getElementById("aug").value);
+	var sept = Number(document.getElementById("sep").value);
+	var octt = Number(document.getElementById("oct").value);
+	var novt = Number(document.getElementById("nov").value);
+	var dect = Number(document.getElementById("dec").value);
+	
+
+	const taxAbleGross = [jant, febt, mart, aprt, mayt, junt, jult, augt, sept, octt, novt, dect];
+	const totalTaxable = [];
+	const incomeTax = [];
+	for (let i = 0; i < taxAbleGross.length; i++){
+		var sum = 0;
+		for(let index = 0; index < i + 1; index++){
+ 	    sum += (taxAbleGross[index] - 5000);
+		}
+		totalTaxable.push(sum);
+	}
+
+	var incomeT = 0;
+	
+	for (let index = 0; index < 13; index++){
+		
+		var previousIG = 0;
+		for (let i = 0; i < index; i++){
+			previousIG += incomeTax[i];
+		}
+		
+		if(totalTaxable[index] > 0 && totalTaxable[index] <= 36000){
+			incomeT = totalTaxable[index] * 0.03 - 0 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else if(totalTaxable[index] > 36000 && totalTaxable[index] <= 144000){
+			incomeT = totalTaxable[index] * 0.1 - 2520 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else if(totalTaxable[index] > 144000 && totalTaxable[index] <= 300000){
+			incomeT = totalTaxable[index] * 0.2 - 16920 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else if(totalTaxable[index] > 300000 && totalTaxable[index] <= 420000){
+			incomeT = totalTaxable[index] * 0.25 - 31920 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else if(totalTaxable[index] > 420000 && totalTaxable[index] <= 660000){
+			incomeT = totalTaxable[index] * 0.30 - 52920 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else if(totalTaxable[index] > 660000 && totalTaxable[index] <= 960000){
+			incomeT = totalTaxable[index] * 0.35 - 85920 - previousIG;
+			incomeTax.push(incomeT);
+		}
+		else{
+			incomeT = totalTaxable[index] * 0.45 - 181920 - previousIG;
+			incomeTax.push(incomeT);
+		}
+	}
+	
+	
+for(let i = 0; taxAbleGross[i] > 0; i++){
+	document.getElementById("total" + i).innerHTML = totalTaxable[i].toFixed(2);
+}
+	
+	
+for(let i = 0; taxAbleGross[i] > 0; i++){
+	document.getElementById("incomeTax" + i).innerHTML = incomeTax[i].toFixed(2);
+}
+	
+	
+	//document.getElementById("test").innerHTML = taxAbleGross.length;
+}
+
+</script>
+</body>
+</html>
